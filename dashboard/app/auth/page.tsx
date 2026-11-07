@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PaidXLogo } from '@/components/ui/PaidXLogo';
-import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
@@ -337,7 +336,7 @@ export default function AuthPage() {
               <span>Sign in with Passkey / Face ID</span>
             </Button>
           </div>
-        </Card>
+        </div>
 
         {/* Security Tagline */}
         <div className="text-center text-[11px] font-mono text-[#666666]">
