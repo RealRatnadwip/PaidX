@@ -45,6 +45,17 @@ export function Navbar() {
         {/* Left: PaidX logo / wordmark */}
         <a
           href="https://paidx.cc"
+          onClick={(e) => {
+            if (typeof window !== 'undefined' && window.location.pathname === '/') {
+              if (window.location.hash) {
+                window.history.pushState(null, '', '/');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                e.preventDefault();
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }
+          }}
           className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-brand-blue/50 rounded-lg py-1 transition-transform"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -61,25 +72,25 @@ export function Navbar() {
         {/* Center: Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 text-[15px] font-medium">
           <a
-            href="#features"
-            onClick={(e) => handleAnchorClick(e, '#features')}
+            href="#why-paidx"
+            onClick={(e) => handleAnchorClick(e, '#why-paidx')}
             className="text-light-text-body hover:text-brand-blue dark:text-dark-text-secondary dark:hover:text-white transition-colors"
           >
-            Features
+            Why PaidX?
           </a>
           <a
             href="#how-it-works"
             onClick={(e) => handleAnchorClick(e, '#how-it-works')}
             className="text-light-text-body hover:text-brand-blue dark:text-dark-text-secondary dark:hover:text-white transition-colors"
           >
-            How it works?
+            How it works ?
           </a>
           <a
-            href="#why-paidx"
-            onClick={(e) => handleAnchorClick(e, '#why-paidx')}
+            href="#features"
+            onClick={(e) => handleAnchorClick(e, '#features')}
             className="text-light-text-body hover:text-brand-blue dark:text-dark-text-secondary dark:hover:text-white transition-colors"
           >
-            Why PaidX
+            Features
           </a>
           <a
             href="/docs"
@@ -131,25 +142,25 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-light-border dark:border-white/10 bg-white/95 dark:bg-[#06142F]/95 backdrop-blur-lg px-4 pt-4 pb-6 space-y-3 transition-all animate-in slide-in-from-top-2">
           <a
-            href="#features"
-            onClick={(e) => handleAnchorClick(e, '#features')}
+            href="#why-paidx"
+            onClick={(e) => handleAnchorClick(e, '#why-paidx')}
             className="block px-3 py-2.5 rounded-lg text-base font-medium text-light-text-body hover:bg-light-soft dark:text-dark-text-secondary dark:hover:bg-dark-elevated dark:hover:text-white transition-colors"
           >
-            Features
+            Why PaidX?
           </a>
           <a
             href="#how-it-works"
             onClick={(e) => handleAnchorClick(e, '#how-it-works')}
             className="block px-3 py-2.5 rounded-lg text-base font-medium text-light-text-body hover:bg-light-soft dark:text-dark-text-secondary dark:hover:bg-dark-elevated dark:hover:text-white transition-colors"
           >
-            How it works?
+            How it works ?
           </a>
           <a
-            href="#why-paidx"
-            onClick={(e) => handleAnchorClick(e, '#why-paidx')}
+            href="#features"
+            onClick={(e) => handleAnchorClick(e, '#features')}
             className="block px-3 py-2.5 rounded-lg text-base font-medium text-light-text-body hover:bg-light-soft dark:text-dark-text-secondary dark:hover:bg-dark-elevated dark:hover:text-white transition-colors"
           >
-            Why PaidX
+            Features
           </a>
           <a
             href="/docs"

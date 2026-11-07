@@ -27,30 +27,30 @@ PaidX is organized into four layers: hardware and clients at the edge, an applic
  
 ```mermaid
 flowchart TB
-    subgraph L1["📟 CLIENT & HARDWARE LAYER"]
+    subgraph L1["CLIENT & HARDWARE LAYER"]
         direction LR
-        CARD["💳 <b>NFC Card</b><br/>13.56 MHz RFID<br/><i>no private keys</i>"]
-        POS["🖥️ <b>ESP32 POS Terminal</b><br/>PN532 + ST7789 TFT"]
-        WEB["🌐 <b>Web Console</b><br/>console.paidx.cc"]
-        AI["🤖 <b>AI Assistant</b><br/>Claude / MCP client"]
+        CARD["<b>NFC Card</b><br/>13.56 MHz RFID<br/><i>no private keys</i>"]
+        POS["<b>ESP32 POS Terminal</b><br/>PN532 + ST7789 TFT"]
+        WEB["<b>Web Console</b><br/>console.paidx.cc"]
+        AI["<b>AI Assistant</b><br/>Claude / MCP client"]
         CARD -- "tap" --> POS
     end
- 
-    subgraph L2["⚙️ APPLICATION & ROUTING LAYER"]
+
+    subgraph L2["APPLICATION & ROUTING LAYER"]
         direction LR
         LAND["<b>Landing Site</b><br/>Next.js 15<br/>paidx.cc"]
         API["<b>Dashboard API</b><br/>Next.js 15<br/>console.paidx.cc/api"]
         MCP["<b>MCP Server</b><br/>Hono · 16 tools<br/>Streamable HTTP"]
     end
- 
-    subgraph L3["🗄️ STATE ENGINE"]
+
+    subgraph L3["STATE ENGINE"]
         direction TB
         DB[("<b>Supabase PostgreSQL</b><br/>RLS · FOR UPDATE locks<br/>stored procedures (RPC)")]
         TABLES["profiles · cards · merchants<br/>agent_policies · audit_log"]
         DB --- TABLES
     end
- 
-    subgraph L4["⛓️ ON-CHAIN SETTLEMENT"]
+
+    subgraph L4["ON-CHAIN SETTLEMENT"]
         direction TB
         subgraph EVM["Base L2 &amp; Ethereum Sepolia"]
             direction LR
@@ -373,7 +373,7 @@ Copy `esp/paidx_secrets.h.example` to `esp/paidx_secrets.h`:
 ### 1. Clone Repository & Install Root Dependencies
  
 ```bash
-git clone https://github.com/paidx-ops/PaidX.git
+git clone https://github.com/RealRatnadwip/PaidX.git
 cd PaidX
 npm install
 ```
@@ -469,3 +469,12 @@ The repository is structured as a monorepo. When creating separate projects on V
 - Contract Ownership: Admin operations on `CardRegistry` and `MerchantRegistry` require hardware or browser wallet signatures from `0xA2e3A301159beA4429c56417aB0856a3f4569efa`.
 - Database Policies: Public access is strictly denied across sensitive tables. Read access to aggregate statistics is granted exclusively through Security Definer functions.
 For technical inquiries or vulnerability reports, review the comprehensive reports located in the `/docs` directory.
+
+---
+
+## 13. Official Links & Community
+
+- GitHub Repository: [https://github.com/RealRatnadwip/PaidX](https://github.com/RealRatnadwip/PaidX)
+- Official X (formerly Twitter): [https://x.com/paidx_cc](https://x.com/paidx_cc)
+- Documentation: [https://paidx.cc/docs](https://paidx.cc/docs)
+- Console: [https://console.paidx.cc](https://console.paidx.cc)

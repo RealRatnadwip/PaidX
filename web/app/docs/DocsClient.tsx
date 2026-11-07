@@ -350,14 +350,14 @@ export function DocsClient({ currentSlug = [] }: DocsClientProps) {
       <header className="docs-top-header">
         <div className="docs-header-inner">
           {/* Brand Logo & Wordmark */}
-          <Link href="/docs/overview" className="docs-brand">
+          <a href="https://paidx.cc" className="docs-brand" title="PaidX Home (paidx.cc)">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-02.png" alt="PaidX Logo" />
             <span className="docs-brand-title">
               PaidX
             </span>
             <span className="docs-badge">Docs</span>
-          </Link>
+          </a>
 
           {/* Search Box */}
           <div
@@ -450,7 +450,7 @@ export function DocsClient({ currentSlug = [] }: DocsClientProps) {
 
             {/* GitHub Repo */}
             <a
-              href="https://github.com"
+              href="https://github.com/RealRatnadwip/PaidX"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
@@ -458,6 +458,20 @@ export function DocsClient({ currentSlug = [] }: DocsClientProps) {
               title="GitHub Repository"
             >
               <Github className="w-4 h-4" />
+            </a>
+
+            {/* X / Twitter */}
+            <a
+              href="https://x.com/paidx_cc"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Follow on X"
+              className="docs-icon-btn hidden sm:inline-flex"
+              title="Follow on X (@paidx_cc)"
+            >
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
             </a>
 
             {/* Launch Console CTA */}
@@ -529,9 +543,9 @@ export function DocsClient({ currentSlug = [] }: DocsClientProps) {
           {/* Mobile Drawer Header */}
           <div className="docs-drawer-header">
             <div className="docs-drawer-brand">
-              <span className="docs-brand-title">
+              <a href="https://paidx.cc" className="docs-brand-title hover:opacity-80 transition-opacity">
                 PaidX Docs
-              </span>
+              </a>
             </div>
             <button
               className="docs-drawer-close-btn"
@@ -578,6 +592,31 @@ export function DocsClient({ currentSlug = [] }: DocsClientProps) {
                 ))}
               </div>
             ))}
+
+            {/* Mobile Drawer Social Links */}
+            <div className="pt-4 mt-4 border-t border-[var(--docs-border-color)] flex items-center gap-3 px-2">
+              <a
+                href="https://github.com/RealRatnadwip/PaidX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-[var(--docs-text-secondary)] hover:text-[var(--docs-brand-primary)]"
+              >
+                <Github className="w-3.5 h-3.5" />
+                <span>GitHub</span>
+              </a>
+              <span className="text-[var(--docs-border-color)]">•</span>
+              <a
+                href="https://x.com/paidx_cc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-[var(--docs-text-secondary)] hover:text-[var(--docs-brand-primary)]"
+              >
+                <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                <span>X (@paidx_cc)</span>
+              </a>
+            </div>
           </nav>
         </aside>
 
@@ -631,6 +670,33 @@ export function DocsClient({ currentSlug = [] }: DocsClientProps) {
                 </Link>
               )}
             </nav>
+
+            {/* Community Links */}
+            <div className="mt-10 pt-6 border-t border-[var(--docs-border-color)] flex flex-wrap items-center justify-between gap-4 text-xs text-[var(--docs-text-secondary)]">
+              <span>PaidX Developer Community</span>
+              <div className="flex items-center gap-4">
+                <a
+                  href="https://github.com/RealRatnadwip/PaidX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-[var(--docs-brand-primary)] transition-colors"
+                >
+                  <Github className="w-3.5 h-3.5" />
+                  <span>GitHub Repository</span>
+                </a>
+                <a
+                  href="https://x.com/paidx_cc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 hover:text-[var(--docs-brand-primary)] transition-colors"
+                >
+                  <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                  <span>Follow @paidx_cc</span>
+                </a>
+              </div>
+            </div>
           </article>
         </main>
 

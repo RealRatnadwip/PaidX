@@ -274,7 +274,9 @@ export const DOCS_PAGES: DocPageItem[] = [
     tab: "architecture",
     toc: [
       { id: "architectural-layers", text: "The Four Architectural Layers", depth: 2 },
-      { id: "transaction-lifecycle", text: "Transaction Settlement Lifecycle", depth: 2 },
+      { id: "payment-flows", text: "Payment Flows", depth: 2 },
+      { id: "card-tap-flow", text: "Card Tap at Countertop Terminal (Base / Sepolia)", depth: 3 },
+      { id: "conversational-ai-flow", text: "Conversational AI Payment (Hedera)", depth: 3 },
       { id: "session-relayer", text: "Backend Session Relayer", depth: 2 },
       { id: "gas-sponsorship", text: "Gas Sponsorship & Paymaster", depth: 2 },
       { id: "deployed-endpoints", text: "Production Testnet Endpoints", depth: 2 },
@@ -293,12 +295,14 @@ export const DOCS_PAGES: DocPageItem[] = [
         <li><strong>PN532 RFID/NFC Module</strong>: Communicates over 13.56 MHz ISO/IEC 14443A protocol with contactless cards and mobile wallets.</li>
         <li><strong>ST7789 IPS Color Display</strong>: 240x320 resolution screen providing instant visual UI transaction feedback.</li>
         <li><strong>Web Console (Next.js)</strong>: Customer and merchant portal for card issuance, spending cap management, and real-time revenue analytics.</li>
+        <li><strong>AI Assistants & MCP Clients</strong>: Autonomous agents (Claude, custom GPTs) communicating with the payment engine over streamable HTTP.</li>
       </ul>
 
-      <h3>2. Application & API Layer (Next.js Edge)</h3>
+      <h3>2. Application & API Layer (Next.js Edge & Hono)</h3>
       <ul>
         <li><strong>Payment Engine (<code>/api/payments</code>)</strong>: Accepts authenticated POS terminal requests, verifies cryptographic salted card hashes against database limits, and orchestrates on-chain settlement.</li>
-        <li><strong>Session Relayer Service</strong>: Maintains a high-throughput transaction submission queue, managing Sepolia nonce synchronization and gas fee estimation.</li>
+        <li><strong>Model Context Protocol (MCP) Server</strong>: Standalone micro-service exposing 16 specialized tools for autonomous conversational wallet operations and x402 payment enforcement.</li>
+        <li><strong>Session Relayer Service</strong>: Maintains a high-throughput transaction submission queue, managing Sepolia/Base nonce synchronization and gas fee estimation.</li>
       </ul>
 
       <h3>3. State & Identity Layer (Supabase PostgreSQL)</h3>
@@ -306,30 +310,228 @@ export const DOCS_PAGES: DocPageItem[] = [
         <li><strong>Profiles & Wallets</strong>: Maps user accounts to smart account addresses, session allowance caps, and rolling daily utilization.</li>
         <li><strong>Card Registry Table</strong>: Stores salted card hashes (<code>keccak256(rawUid + salt)</code>), issuance timestamps, and lifecycle states (<code>active</code>, <code>frozen</code>, <code>revoked</code>).</li>
         <li><strong>Merchant Registry Table</strong>: Stores authorized merchant IDs, store names, and verified payout destination addresses.</li>
+        <li><strong>Row-Locked Stored Procedures</strong>: PostgreSQL <code>FOR UPDATE</code> stored procedures (<code>reserve_agent_budget</code>, <code>commit_agent_reservation</code>) guaranteeing zero double-spending in multi-agent environments.</li>
       </ul>
 
-      <h3>4. On-Chain Settlement Layer (Ethereum Sepolia 11155111)</h3>
+      <h3>4. On-Chain Settlement Layer</h3>
       <ul>
-        <li><strong>CardRegistry.sol</strong>: Decentralized on-chain registry tracking card hash ownership and authorized spenders.</li>
-        <li><strong>MerchantRegistry.sol</strong>: Smart contract maintaining verified merchant status and whitelisted payout destinations.</li>
-        <li><strong>Circle Native USDC (ERC-20)</strong>: Direct P2P transfer destination without intermediate protocol token vaults.</li>
+        <li><strong>Base L2 (8453)</strong>: Production physical POS retail settlement in native Circle USDC (<code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code>).</li>
+        <li><strong>Ethereum Sepolia (11155111)</strong>: Staging & development testnet for CardRegistry.sol and MerchantRegistry.sol contracts with Circle testnet USDC.</li>
+        <li><strong>Hedera Testnet (Chain 296)</strong>: Agentic commerce settlement rail using Hedera Token Service (HTS USDC: <code>0.0.5449156</code>), Hedera Consensus Service (HCS) immutable audit topic, and 2-of-3 MPC threshold signing.</li>
       </ul>
 
-      <h2 id="transaction-lifecycle">Transaction Settlement Lifecycle</h2>
-      <p>When a customer taps their card at a merchant terminal, the following sequence occurs:</p>
-      <ol>
-        <li><strong>Hardware Tap</strong>: PN532 reads card UID over 13.56 MHz RFID. Terminal transmits payload to <code>POST /api/payments</code> with merchant API key and amount.</li>
-        <li><strong>Hash Resolution</strong>: API hashes the incoming UID with <code>CARD_UID_SALT</code> and queries Supabase for the associated customer smart account.</li>
-        <li><strong>Policy Validation</strong>: System checks:
-          <ul>
-            <li>Is the card active (not frozen/revoked)?</li>
-            <li>Is the requested amount within the user's daily rolling spending cap?</li>
-            <li>Does the customer's wallet possess sufficient USDC balance and allowance?</li>
-          </ul>
-        </li>
-        <li><strong>Relayer Execution</strong>: The Session Relayer calls <code>CircleUSDC.transferFrom(customer, merchantPayout, amount)</code>.</li>
-        <li><strong>Terminal Acknowledgment</strong>: API returns HTTP 200 with transaction hash. Terminal renders green checkmark animation, vibrates piezo buzzer, and prints receipt data.</li>
-      </ol>
+      <h2 id="payment-flows">Payment Flows</h2>
+      <p>
+        PaidX supports two distinct, production-tested payment flows: physical NFC card taps at hardware countertop terminals on EVM chains (Base / Sepolia), and autonomous conversational micro-transactions powered by AI agents on Hedera Testnet.
+      </p>
+
+      <h3 id="card-tap-flow">Card Tap at Countertop Terminal (Base / Sepolia)</h3>
+      <p>
+        The physical retail flow executes contactless payments from a customer's self-custody smart account to a merchant terminal within an approved ERC-7715 daily rolling budget without requiring mobile phone unlocking or seed phrase exposure:
+      </p>
+
+      <div class="docs-code-block">
+        <div class="dcb-header">
+          <span class="dcb-title">Sequence Diagram — Physical Card Tap Settlement</span>
+          <button class="dcb-copy" data-copy-code type="button">Copy Mermaid</button>
+        </div>
+        <pre><code>sequenceDiagram
+    autonumber
+    actor C as Customer
+    participant P as ESP32 POS
+    participant A as Dashboard API
+    participant D as Supabase
+    participant R as Session Relayer
+    participant E as EVM Chain
+
+    C->>P: Tap NFC card
+    P->>A: UID + amount (X-Device-Token)
+    A->>A: cardHash = keccak256(uid + salt)
+    A->>D: Check card, merchant, daily allowance
+    D-->>A: Approved
+    A->>R: Execute within ERC-7715 limit
+    R->>E: USDC transfer (wallet → merchant)
+    E-->>A: Confirmed
+    A-->>P: Success
+    P-->>C: Buzzer + green LED</code></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Participant</th>
+              <th>Operation Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td>Customer → ESP32 POS</td>
+              <td>Customer taps unprivileged physical NFC card (13.56 MHz RFID, ISO/IEC 14443A) against the PN532 countertop reader.</td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td>ESP32 POS → API</td>
+              <td>POS firmware transmits captured 7-byte UID and requested checkout amount over TLS authenticated with the device's provisioned <code>X-Device-Token</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td>Dashboard API</td>
+              <td>API computes cryptographic salted hash: <code>cardHash = keccak256(abi.encodePacked(rawUid, CARD_UID_SALT))</code>. The plaintext UID is never persisted.</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td>API → Supabase</td>
+              <td>Database evaluates row-locked customer profile, verifies the card is <code>active</code>, confirms merchant validity, and verifies the amount is within the remaining daily allowance.</td>
+            </tr>
+            <tr>
+              <td><strong>5</strong></td>
+              <td>Supabase → API</td>
+              <td>State engine grants approval and temporarily decrements the daily rolling limit to prevent double-spend race conditions.</td>
+            </tr>
+            <tr>
+              <td><strong>6</strong></td>
+              <td>API → Session Relayer</td>
+              <td>API dispatches an authorized execution task to the backend Session Relayer (<code>0x08AC38...</code>) within approved ERC-7715 permissions.</td>
+            </tr>
+            <tr>
+              <td><strong>7</strong></td>
+              <td>Session Relayer → EVM</td>
+              <td>Relayer submits <code>CircleUSDC.transferFrom(customer, merchantPayout, amount)</code> on Base L2 or Ethereum Sepolia, sponsoring gas.</td>
+            </tr>
+            <tr>
+              <td><strong>8</strong></td>
+              <td>EVM Chain → API</td>
+              <td>Transaction is mined and confirmed with on-chain Transfer event emitted.</td>
+            </tr>
+            <tr>
+              <td><strong>9</strong></td>
+              <td>API → ESP32 POS</td>
+              <td>API returns HTTP 200 OK with on-chain transaction hash and confirmation metadata.</td>
+            </tr>
+            <tr>
+              <td><strong>10</strong></td>
+              <td>ESP32 POS → Customer</td>
+              <td>ST7789 display renders green checkmark animation, piezo buzzer sounds success tone, and receipt prints on the merchant counter.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="conversational-ai-flow">Conversational AI Payment (Hedera)</h3>
+      <p>
+        The conversational AI flow enables autonomous software agents and LLM assistants (such as Claude or custom GPTs) to negotiate payment requirements, reserve budgets, obtain multi-party signatures, and execute transfers over Hedera Testnet using the Hedera x402 exact payment scheme:
+      </p>
+
+      <div class="docs-code-block">
+        <div class="dcb-header">
+          <span class="dcb-title">Sequence Diagram — Conversational AI Payment (Hedera x402)</span>
+          <button class="dcb-copy" data-copy-code type="button">Copy Mermaid</button>
+        </div>
+        <pre><code>sequenceDiagram
+    autonumber
+    actor U as User
+    participant AI as AI Assistant
+    participant M as MCP Server
+    participant D as Supabase
+    participant H as Hedera
+    participant S as MPC Signer
+
+    U->>AI: "Pay 5 USDC to Alice"
+    AI->>M: prepare_wallet_payment
+    M->>D: reserve_agent_budget (row-locked)
+    D-->>M: Reserved
+    AI->>M: execute_wallet_payment
+    M->>S: Request 2-of-3 signature
+    S-->>M: Signed x402 payload
+    M->>H: Submit HTS USDC transfer
+    H-->>M: Consensus + Mirror Node record
+    M->>D: commit_agent_reservation
+    M->>H: Publish HCS audit event
+    M-->>AI: Payment confirmed
+    AI-->>U: "Sent. Here's the receipt."</code></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Step</th>
+              <th>Participant</th>
+              <th>Operation Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td>User → AI Assistant</td>
+              <td>User instructs their agent using natural language (e.g. <em>"Pay 5 USDC to 0.0.123456"</em> or <em>"Purchase API access token"</em>).</td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td>AI Assistant → MCP Server</td>
+              <td>Agent invokes the <code>prepare_wallet_payment</code> tool on the PaidX Model Context Protocol (MCP) server.</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td>MCP Server → Supabase</td>
+              <td>Server executes <code>reserve_agent_budget</code> RPC with PostgreSQL <code>FOR UPDATE</code> row locking to ensure race-free budget enforcement.</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td>Supabase → MCP Server</td>
+              <td>Database verifies daily budget, monthly cap, maximum per-transaction threshold, and whitelisted token address before returning reservation token.</td>
+            </tr>
+            <tr>
+              <td><strong>5</strong></td>
+              <td>AI Assistant → MCP Server</td>
+              <td>Agent reviews prepared parameters against user instructions and invokes <code>execute_wallet_payment</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>6</strong></td>
+              <td>MCP Server → MPC Signer</td>
+              <td>Server requests 2-of-3 Multi-Party Computation threshold signing across distributed key shares.</td>
+            </tr>
+            <tr>
+              <td><strong>7</strong></td>
+              <td>MPC Signer → MCP Server</td>
+              <td>Valid cryptographic signature is assembled without any single entity holding the complete private key.</td>
+            </tr>
+            <tr>
+              <td><strong>8</strong></td>
+              <td>MCP Server → Hedera</td>
+              <td>Server submits Hedera Token Service (HTS) transfer transaction for USDC (Token ID: <code>0.0.5449156</code>).</td>
+            </tr>
+            <tr>
+              <td><strong>9</strong></td>
+              <td>Hedera → MCP Server</td>
+              <td>Transaction reaches final network consensus in ~2.5 seconds and is indexed on Hedera Mirror Node.</td>
+            </tr>
+            <tr>
+              <td><strong>10</strong></td>
+              <td>MCP Server → Supabase</td>
+              <td>Server executes <code>commit_agent_reservation</code>, deducting the reserved amount and committing the transaction record.</td>
+            </tr>
+            <tr>
+              <td><strong>11</strong></td>
+              <td>MCP Server → Hedera HCS</td>
+              <td>Server submits an immutable cryptographic audit message to the Hedera Consensus Service (HCS topic).</td>
+            </tr>
+            <tr>
+              <td><strong>12</strong></td>
+              <td>MCP Server → AI Assistant</td>
+              <td>Returns structured confirmation with consensus timestamp, transaction ID, and Mirror Node explorer URL.</td>
+            </tr>
+            <tr>
+              <td><strong>13</strong></td>
+              <td>AI Assistant → User</td>
+              <td>Agent reports successful completion and presents the immutable transaction receipt to the user.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <h2 id="session-relayer">Backend Session Relayer</h2>
       <p>
@@ -374,9 +576,29 @@ export const DOCS_PAGES: DocPageItem[] = [
               <td><code>0xb11dAE79F1B187E95CB93655A983D6e86E574145</code></td>
             </tr>
             <tr>
-              <td><strong>Circle Native USDC</strong></td>
-              <td>Ethereum Sepolia</td>
+              <td><strong>Base L2 Native USDC</strong></td>
+              <td>Base Mainnet (8453)</td>
+              <td><code>0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913</code></td>
+            </tr>
+            <tr>
+              <td><strong>Sepolia Testnet USDC</strong></td>
+              <td>Ethereum Sepolia (11155111)</td>
               <td><code>0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238</code></td>
+            </tr>
+            <tr>
+              <td><strong>Hedera HTS USDC</strong></td>
+              <td>Hedera Testnet (296)</td>
+              <td><code>0.0.5449156</code></td>
+            </tr>
+            <tr>
+              <td><strong>Hedera Native HBAR</strong></td>
+              <td>Hedera Testnet (296)</td>
+              <td><code>0.0.0</code> (Gas & Operations)</td>
+            </tr>
+            <tr>
+              <td><strong>Hedera Mirror Node</strong></td>
+              <td>Hedera Testnet</td>
+              <td><code>https://testnet.mirrornode.hedera.com</code></td>
             </tr>
             <tr>
               <td><strong>Session Relayer EOA</strong></td>
