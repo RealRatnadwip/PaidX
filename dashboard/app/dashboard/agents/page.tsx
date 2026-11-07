@@ -1258,7 +1258,6 @@ export default function AgentWalletPage() {
                   <div>• <strong className="text-[#111111] dark:text-[#F5F8FF]">Security:</strong> Server-issued, single-use cryptographic challenge</div>
                   <div>• <strong className="text-[#111111] dark:text-[#F5F8FF]">Resolution:</strong> Automatically resolves EVM address to Hedera Account ID (0.0.x) on Mirror Node</div>
                 </div>
-                </div>
 
                 <div className="pt-2 border-t border-[#1A2E38] flex items-center justify-between">
                   <span className="text-[11px] text-[#888888]">Hashio RPC Health:</span>
