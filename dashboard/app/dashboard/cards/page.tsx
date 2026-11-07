@@ -417,7 +417,7 @@ export default function CardsAndLimitsPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="font-archivo font-extrabold tracking-tight text-lg text-white">
-                          Paid<span className="text-[#19D9F2]">X</span>
+                          PaidX
                         </span>
                         <span className="text-[9px] font-archivo font-semibold uppercase tracking-wider text-white/70 ml-1">
                           NFC Smart Card
