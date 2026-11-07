@@ -1257,10 +1257,6 @@ export default function AgentWalletPage() {
                   <div>• <span className="text-[#DFE0E2]">Explorer:</span> https://hashscan.io/testnet</div>
                   <div>• <span className="text-[#DFE0E2]">Security:</span> Server-issued, single-use cryptographic challenge</div>
                   <div>• <span className="text-[#DFE0E2]">Resolution:</span> Automatically resolves EVM address to Hedera Account ID (0.0.x) on Mirror Node</div>
-                <div className="space-y-1 text-[11px] pt-1">
-                  <div>• <strong className="text-[#111111] dark:text-white">Network:</strong> Hedera Testnet (Chain ID 296)</div>
-                  <div>• <strong className="text-[#111111] dark:text-white">RPC:</strong> https://testnet.hashio.io/api</div>
-                  <div>• <strong className="text-[#111111] dark:text-white">Resolution:</strong> Automatically maps EVM address to Hedera Account ID (0.0.x) on Mirror Node</div>
                 </div>
 
                 <div className="pt-2 border-t border-[#1A2E38] flex items-center justify-between">
@@ -1585,13 +1581,6 @@ export default function AgentWalletPage() {
                   <div className="text-[11px] text-[#AAAAAA]">
                     Allow agent to sign and settle payments autonomously within policy limits
                   </div>
-            <div className="flex items-center justify-between p-4 bg-[#F8FAFC] dark:bg-white/5 border border-[#E2E8F0] dark:border-white/10 rounded-xl">
-              <div>
-                <div className="text-xs font-semibold text-[#111111] dark:text-[#F5F8FF]">
-                  Autonomous Execution
-                </div>
-                <div className="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
-                  Allow agent to pay up to daily budget without user prompt
                 </div>
                 <input
                   type="checkbox"
@@ -1607,12 +1596,6 @@ export default function AgentWalletPage() {
                 <div>Signing Mode: <span className="text-emerald-400">MPC 2-of-3 Threshold</span></div>
                 <div>Revocation: <span className="text-amber-400">Instant 1-Click</span></div>
               </div>
-              <input
-                type="checkbox"
-                checked={autonomousEnabled}
-                onChange={(e) => setAutonomousEnabled(e.target.checked)}
-                className="w-4 h-4 accent-[#1749F5] rounded"
-              />
             </div>
 
             <div className="flex justify-end gap-2.5 pt-2">
