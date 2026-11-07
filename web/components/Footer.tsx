@@ -23,9 +23,7 @@ export function Footer() {
             </p>
           </div>
           <a
-            href="https://paidx.cc/docs"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/docs"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[8px] text-sm font-medium text-white bg-[#2045E8] hover:bg-[#1a38be] transition-all shrink-0 shadow-sm active:scale-[0.98]"
           >
             Get Help & Support
@@ -95,18 +93,18 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-[14px]">
               <li>
-                <a href="https://paidx.cc/docs" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
+                <a href="/docs/overview" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
                   Documentation
                 </a>
               </li>
               <li>
-                <a href="https://paidx.cc/docs" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
+                <a href="/docs/api-reference" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
                   REST APIs
                 </a>
               </li>
               <li>
-                <a href="https://paidx.cc/docs" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
-                  Webhooks
+                <a href="/docs/x402-protocol" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
+                  x402 Protocol
                 </a>
               </li>
               <li>
@@ -115,8 +113,13 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
+                <a href="https://github.com/RealRatnadwip/PaidX" target="_blank" rel="noopener noreferrer" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
                   GitHub Repos
+                </a>
+              </li>
+              <li>
+                <a href="https://x.com/paidx_cc" target="_blank" rel="noopener noreferrer" className="text-[#94A3B8] hover:text-[#5B8EFF] transition-colors">
+                  X (@paidx_cc)
                 </a>
               </li>
             </ul>
@@ -164,16 +167,18 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4">
             <a
-              href="https://twitter.com"
+              href="https://x.com/paidx_cc"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Twitter"
+              aria-label="X (Twitter)"
               className="p-2 rounded-lg text-[#94A3B8] hover:text-[#5B8EFF] hover:bg-white/5 transition-all"
             >
-              <Twitter className="w-4 h-4" />
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/RealRatnadwip/PaidX"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"

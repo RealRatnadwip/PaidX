@@ -54,7 +54,7 @@ export function Navbar() {
             className="w-8 h-8 rounded-[8px] shadow-sm transition-transform group-hover:scale-105 object-cover"
           />
           <span className="font-extrabold text-2xl tracking-tight text-[#090B12] dark:text-[#F5F8FF]">
-            Paid<span className="text-[#090B12] dark:text-white">X</span>
+            PaidX
           </span>
         </a>
 
@@ -82,9 +82,7 @@ export function Navbar() {
             Why PaidX
           </a>
           <a
-            href="https://paidx.cc/docs"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/docs"
             className="inline-flex items-center gap-1 text-light-text-body hover:text-brand-blue dark:text-dark-text-secondary dark:hover:text-white transition-colors"
           >
             Docs
@@ -154,9 +152,7 @@ export function Navbar() {
             Why PaidX
           </a>
           <a
-            href="https://paidx.cc/docs"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/docs"
             className="flex items-center justify-between px-3 py-2.5 rounded-lg text-base font-medium text-light-text-body hover:bg-light-soft dark:text-dark-text-secondary dark:hover:bg-dark-elevated dark:hover:text-white transition-colors"
           >
             Docs
