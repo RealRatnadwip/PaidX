@@ -9,6 +9,7 @@ import { FeaturesSection } from '@/components/FeaturesSection';
 import { StatsSection } from '@/components/StatsSection';
 import { CurrencyCoverageSection } from '@/components/CurrencyCoverageSection';
 import { FastSettlementSection } from '@/components/FastSettlementSection';
+import { AgenticPaymentsSection } from '@/components/AgenticPaymentsSection';
 import { FaqSection } from '@/components/FaqSection';
 import { WaitlistSection } from '@/components/WaitlistSection';
 import { Footer } from '@/components/Footer';
@@ -41,6 +42,9 @@ export default function LandingPage() {
 
         {/* Fast Bank Settlement & Conversion */}
         <FastSettlementSection />
+
+        {/* Agentic Payments over x402 Protocol */}
+        <AgenticPaymentsSection />
 
         {/* Comprehensive FAQ Accordion */}
         <FaqSection />
